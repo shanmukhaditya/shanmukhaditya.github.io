@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Github, Linkedin, Mail, FileText, Box, Dna, Globe } from 'lucide-react';
+import LeetCodeIcon from './components/LeetCodeIcon';
 import Hero from './components/Hero';
 import Experience from './components/Experience';
 import Projects from './components/Projects';
@@ -76,6 +77,7 @@ function App() {
 
                     <a href={profile.github} target="_blank" rel="noreferrer" style={{ color: 'var(--text-color)' }}><Github size={20} /></a>
                     <a href={profile.linkedin} target="_blank" rel="noreferrer" style={{ color: 'var(--text-color)' }}><Linkedin size={20} /></a>
+                    <a href={profile.leetcode} target="_blank" rel="noreferrer" style={{ color: 'var(--text-color)' }}><LeetCodeIcon size={22} /></a>
 
                     <button onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>
                         {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}

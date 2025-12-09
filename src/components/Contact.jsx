@@ -1,6 +1,7 @@
 import React from 'react';
 import { profile } from '../data';
 import { Mail, Linkedin, Github } from 'lucide-react';
+import LeetCodeIcon from './LeetCodeIcon';
 
 const Contact = () => {
     return (
@@ -20,6 +21,9 @@ const Contact = () => {
                 </a>
                 <a href={profile.linkedin} target="_blank" rel="noreferrer" style={{ color: 'var(--secondary-color)', transition: 'color 0.2s' }}>
                     <Linkedin size={30} />
+                </a>
+                <a href={profile.leetcode} target="_blank" rel="noreferrer" style={{ color: 'var(--secondary-color)', transition: 'color 0.2s' }}>
+                    <LeetCodeIcon size={32} />
                 </a>
                 <a href={`mailto:${profile.email}`} style={{ color: 'var(--secondary-color)', transition: 'color 0.2s' }}>
                     <Mail size={30} />
