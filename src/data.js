@@ -7,7 +7,31 @@ export const profile = {
     linkedin: "https://linkedin.com/in/shanmukh-y",
     github: "https://github.com/shanmukhaditya",
     leetcode: "https://leetcode.com/u/shanmukhaditya9/",
-    summary: "Software Engineer with 4+ years of experience building scalable APIs, ML-powered services, and data pipelines. Hands-on expertise in Python, FastAPI, distributed data processing, and cloud-based platforms. Passionate about LLM integration, agentic chatbot development, and delivering production-grade AI/ML solutions."
+    resumeUrl: "/Shanmukh-Yenikapati.pdf",
+    summary: "Software Engineer with 5 years of experience building production-scale APIs, agentic AI systems, and full-stack applications. Expert in Python/FastAPI backends, LLM integration (RAG, multi-agent systems, fine-tuning), and rapid prototyping from 0→1. Built production systems handling 200k+ requests/day."
+};
+
+// Featured Project - Squadfire
+export const featuredProject = {
+    title: "Squadfire",
+    tagline: "Join the squad, Rise together",
+    description: "Collaborative task management platform with gamification, automated scheduling, and real-time leaderboards. Features async Python backend, HTMX-powered UI, and multi-strategy task distribution.",
+    tech: ["Python", "FastAPI", "PostgreSQL", "HTMX", "Tailwind CSS", "Docker"],
+    liveUrl: "https://squadfire.shanmukh.dev",
+    githubUrl: "https://github.com/shanmukhaditya/squadfire",
+    metrics: [
+        { label: "Async Coverage", value: "100%" },
+        { label: "Bulk import task modes", value: "tab/csv" },
+        { label: "Threaded Comment Depth", value: "∞" },
+        { label: "Schemas", value: "20+" }
+    ],
+    highlights: [
+        "Fully async Python backend with PostgreSQL AsyncSession",
+        "Task scheduling engine (daily/interval/weekly/rotating cycles)",
+        "Task Pools with 4 distribution strategies for backlog management",
+        "Analytics middleware with GeoIP enrichment & GDPR compliance",
+        "Email notifications with dynamic leaderboard image generation"
+    ]
 };
 
 export const experience = [
@@ -17,11 +41,11 @@ export const experience = [
         location: "Charlotte, NC",
         period: "05/2024 - Present",
         description: [
-            "Designed and scaled distributed backend services across 10+ microservices handling 200k+ requests/day, reducing latency by 30% through Redis caching and optimized request routing.",
-            "Owned end-to-end service lifecycle: design, implementation, deployment, observability (Prometheus + Grafana), and on-call P1/P2 incident resolution.",
-            "Boosted chatbot containment rate from 50% → 70% by deploying multi-agent OpenAI GPT-powered system using A2A + MCP enabling distributed coordination.",
-            "Delivered a Natural Language Understanding (NLU) service using BERT and FastAPI, enhancing chatbot intent prediction accuracy by 20%.",
-            "Engineered Transcript Analyzer application to process and summarize customer chat transcripts using BERTopic, OpenAI, FastAPI."
+            "Architected and deployed multi-agent, multi-modal chatbot system using OpenAI GPT, A2A + MCP protocols, and RAG—boosting containment rate from 50% → 70%.",
+            "Designed distributed backend services across 10+ microservices handling 200k+ requests/day, achieving 30% latency reduction through Redis caching.",
+            "Built NLU service with fine-tuned BERT on FastAPI, improving intent prediction accuracy by 20%.",
+            "Engineered Transcript Analyzer using BERTopic, OpenAI, and Faiss vector indexing—reducing duplicate topic generation by 40%.",
+            "Owned full service lifecycle: design → deployment → observability (Prometheus + Grafana)."
         ]
     },
     {
@@ -30,9 +54,9 @@ export const experience = [
         location: "Charlotte, NC",
         period: "03/2023 - 05/2024",
         description: [
-            "Engineered data pipelines with Apache Airflow, PySpark, and GCP Dataproc to process and transform daily chatbot data from MongoDB into actionable insights.",
-            "Created and maintained comprehensive data analytics dashboards in Apache Superset, producing over 200 visualizations.",
-            "Increased test coverage for key backend services AI, NLU, Transcript Analyzer APIs from 65% to 90%."
+            "Engineered data pipelines with Apache Airflow, PySpark, and GCP Dataproc to process daily chatbot data from MongoDB.",
+            "Created 200+ visualizations in Apache Superset dashboards for user behavior analytics.",
+            "Increased test coverage for AI, NLU, Transcript Analyzer APIs from 65% to 90%."
         ]
     },
     {
@@ -41,9 +65,9 @@ export const experience = [
         location: "Bentonville, AR",
         period: "06/2022 - 08/2022",
         description: [
-            "Increased data integrity by detecting anomalies in DB insert patterns with SQL-driven statistical models, reducing incident tickets by 25%.",
-            "Automated validation scripts to identify and rectify misconfigured DB properties, cutting manual resolution efforts by 30%.",
-            "Optimized ingestion pipelines, contributing to latency reduction in batch jobs by 18%."
+            "Detected anomalies in DB insert patterns using SQL-driven statistical models, reducing incident tickets by 25%.",
+            "Automated validation scripts for misconfigured DB properties, cutting manual resolution by 30%.",
+            "Optimized ingestion pipelines, achieving 18% latency reduction in batch jobs."
         ]
     },
     {
@@ -52,68 +76,70 @@ export const experience = [
         location: "Hyderabad, India",
         period: "05/2019 - 07/2021",
         description: [
-            "Built and scaled backend APIs in Java Spring Boot to process millions of healthcare claims daily.",
-            "Developed Spark pipelines in Databricks powering dashboards used by 300+ agents.",
-            "Migrated mission-critical financial-like workloads from PL/SQL → T-SQL on Azure SQL, reducing average query latency by 40%."
+            "Built and scaled backend APIs in Java Spring Boot processing millions of healthcare claims daily.",
+            "Developed Spark pipelines in Databricks powering dashboards for 300+ agents.",
+            "Migrated PL/SQL → T-SQL on Azure SQL, reducing query latency by 40%."
         ]
     }
 ];
 
+// Projects ordered: Strong → Weak
 export const projects = [
     {
-        title: "Intelligent Chatbot",
-        tech: ["Python", "Tensorflow", "NMT", "SQLite", "Discord"],
-        date: "12/2020",
-        description: "Developed a Neural Machine Translation-based deep learning model trained on Reddit chat data, integrated a toxicity-filtering score system."
-    },
-    {
-        title: "IWREN Improved Wild Relation Network - Visual Reasoning Model",
-        tech: ["Python", "Pytorch"],
+        title: "IWREN - Improved Wild Relation Network",
+        tech: ["Python", "PyTorch", "Deep Learning"],
         date: "03/2022",
-        link: "[Repo]",
-        description: "Enhanced an abstract visual reasoning model with architecture updates and dataset augmentation, increasing accuracy by 43%."
+        link: "https://github.com/shanmukhaditya/IWREN",
+        description: "Enhanced abstract visual reasoning model with architecture updates and dataset augmentation, achieving 43% accuracy improvement over baseline."
     },
     {
-        title: "TCP Load Balancer and Web Server",
-        tech: ["C++", "C", "Bash", "Linux", "Networking"],
+        title: "TCP Load Balancer & Web Server",
+        tech: ["C++", "C", "Linux", "Networking", "Bash"],
         date: "05/2023",
         link: "https://github.com/shanmukhaditya/load-balancer",
-        description: "Implemented a simple TCP load balancer in C++ that proxies client requests to multiple C-based web servers, with bash utilities to spin up and test the mini-cluster, giving hands-on experience with sockets and process orchestration."
+        description: "Built TCP load balancer in C++ that proxies client requests to multiple C-based web servers, with bash utilities for cluster orchestration."
+    },
+    {
+        title: "Reinforcement Learning - Car Racing",
+        tech: ["Python", "Reinforcement Learning", "OpenAI Gym"],
+        date: "05/2021",
+        link: "https://github.com/shanmukhaditya/Car-Racing-with-RL",
+        description: "Trained RL agents for cart-pole balancing and 2D car racing environments with checkpoint evaluation and policy iteration."
+    },
+    {
+        title: "Intelligent Chatbot",
+        tech: ["Python", "TensorFlow", "NMT", "Discord"],
+        date: "12/2020",
+        link: "https://github.com/shanmukhaditya/intelligent-chatbot",
+        description: "Neural Machine Translation model trained on Reddit chat data with toxicity-filtering score system."
     },
     {
         title: "Stock Reports Backend",
         tech: ["Python", "Django", "SQLite"],
         date: "05/2023",
         link: "https://github.com/shanmukhaditya/stockreports-backend",
-        description: "Set up a Django backend project to track stock transactions and reports, defining models, views, and SQLite persistence as the foundation for a personal stock analytics and reporting service."
+        description: "Django backend for stock transaction tracking with models, views, and SQLite persistence."
     },
     {
         title: "Dog Breed Image Explorer",
-        tech: ["Node.js", "Koa", "JavaScript", "EJS", "Axios"],
+        tech: ["Node.js", "Koa", "JavaScript", "EJS"],
         date: "12/2022",
         link: "https://github.com/shanmukhaditya/dogs",
-        description: "Built a small web app that calls the public dog.ceo API to fetch random dog images and breed-specific galleries, using a Koa backend with Axios to fetch data and EJS templates to render a browsable dog image gallery."
+        description: "Web app using dog.ceo API for random dog images and breed-specific galleries with Koa backend."
     },
     {
-        title: "Bank-ATM – ASP.NET MVC ATM Simulator",
+        title: "Bank-ATM Simulator",
         tech: ["C#", "ASP.NET MVC", "HTML", "CSS"],
         date: "02/2022",
         link: "https://github.com/shanmukhaditya/Bank-ATM",
-        description: "Created a web-based ATM simulation using ASP.NET MVC with controllers, models, and views to handle typical ATM interactions such as viewing balances and performing basic account operations within a browser UI."
+        description: "Web-based ATM simulation with MVC architecture for balance viewing and account operations."
     },
     {
-        title: "MNIST – Handwritten Digit Classifiers",
+        title: "MNIST Handwritten Digit Classifiers",
         tech: ["Python", "NumPy", "Deep Learning"],
         date: "01/2022",
         link: "https://github.com/shanmukhaditya/MNIST",
-        description: "Implemented three different neural networks to classify MNIST handwritten digits, including a from-scratch implementation without any deep-learning framework, to compare training pipelines, model complexity, and performance across approaches."
-    },
-    {
-        title: "Reinforcement Learning for Classic Control & Racing",
-        tech: ["Python", "Reinforcement Learning"],
-        date: "05/2021",
-        link: "https://github.com/shanmukhaditya/Car-Racing-with-RL",
-        description: "Experimented with reinforcement learning agents for a classic cart-pole balancing task and a 2D car-racing environment, writing training scripts and saving checkpoints to evaluate and iterate on learned control policies over time."
+        description: "Implemented three neural networks including a from-scratch implementation without frameworks to compare training pipelines and performance."
     }
 ];
 
@@ -133,8 +159,10 @@ export const education = [
 ];
 
 export const skills = {
-    languages: ["Python", "Java", "C/C++", "SQL", "Go (basic)", "JavaScript/React"],
-    frameworks: ["FastAPI", "Flask", "Spring Boot", "React", "Node.js"],
-    dataML: ["PySpark", "Airflow", "TensorFlow", "PyTorch", "Pandas", "OpenAI", "RAG", "Vector DBs"],
-    tools: ["Docker", "Kubernetes", "Redis", "Kafka", "GCP", "Git"]
+    languages: ["Python", "C/C++", "Java", "SQL", "Go (basic)"],
+    backend: ["FastAPI", "Flask", "Spring Boot", "SQLAlchemy (async)", "REST APIs", "Microservices", "Redis", "Kafka"],
+    aiml: ["OpenAI", "LangChain", "LlamaIndex", "RAG", "Vector DBs (Faiss)", "Fine-tuning (BERT)", "BERTopic", "PyTorch", "TensorFlow"],
+    data: ["PySpark", "Apache Airflow", "MongoDB", "PostgreSQL", "GCP (Dataproc, Vertex AI)", "Databricks"],
+    devops: ["Docker", "Kubernetes", "Prometheus", "Grafana", "CI/CD", "Nginx", "Google Cloud", "Oracle Cloud"],
+    frontend: ["HTMX", "React", "Tailwind CSS", "Jinja2 Templates"]
 };

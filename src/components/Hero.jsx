@@ -62,7 +62,7 @@ const Hero = ({ theme, shape }) => {
                         fontFamily: 'var(--font-mono)',
                         minHeight: '1.5em'
                     }}>
-                        <TypingEffect text="Building scalable systems & AI agents." speed={50} delay={1000} />
+                        <TypingEffect text="Shipping production AI systems at speed." speed={50} delay={1000} />
                     </p>
 
                     <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>

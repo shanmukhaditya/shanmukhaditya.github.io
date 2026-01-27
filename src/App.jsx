@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Github, Linkedin, Mail, FileText, Box, Dna, Globe } from 'lucide-react';
 import LeetCodeIcon from './components/LeetCodeIcon';
 import Hero from './components/Hero';
+import FeaturedProject from './components/FeaturedProject';
+import Skills from './components/Skills';
 import Experience from './components/Experience';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
@@ -88,6 +90,8 @@ function App() {
             <Hero theme={theme} shape={shape} />
 
             <main className="container">
+                <FeaturedProject />
+                <Skills />
                 <Experience />
                 <Projects />
                 <Contact />

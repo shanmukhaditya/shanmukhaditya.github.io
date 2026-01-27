@@ -30,16 +30,28 @@ const CommandPalette = ({ theme, toggleTheme }) => {
             action: () => { toggleTheme(); setIsOpen(false); }
         },
         {
-            id: 'projects',
-            label: 'Go to Projects',
+            id: 'featured',
+            label: 'Go to Featured Project',
             icon: <FileText size={18} />,
-            action: () => { window.location.href = '#projects'; setIsOpen(false); }
+            action: () => { window.location.href = '#featured'; setIsOpen(false); }
+        },
+        {
+            id: 'skills',
+            label: 'Go to Skills',
+            icon: <FileText size={18} />,
+            action: () => { window.location.href = '#skills'; setIsOpen(false); }
         },
         {
             id: 'experience',
             label: 'Go to Experience',
             icon: <FileText size={18} />,
             action: () => { window.location.href = '#experience'; setIsOpen(false); }
+        },
+        {
+            id: 'projects',
+            label: 'Go to Projects',
+            icon: <FileText size={18} />,
+            action: () => { window.location.href = '#projects'; setIsOpen(false); }
         },
         {
             id: 'contact',

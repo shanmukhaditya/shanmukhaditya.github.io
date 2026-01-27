@@ -3,6 +3,8 @@ import { motion, useScroll } from 'framer-motion';
 
 const sections = [
     { id: 'hero', label: 'HOME' },
+    { id: 'featured', label: 'FEAT.' },
+    { id: 'skills', label: 'SKILL' },
     { id: 'experience', label: 'EXP.' },
     { id: 'projects', label: 'PROJ.' },
     { id: 'contact', label: 'MAIL' }
@@ -15,21 +17,19 @@ const ScrollNavigation = () => {
         const handleScroll = () => {
             const scrollPosition = window.scrollY + window.innerHeight / 3;
 
-            // Simple section detection
-            const hero = document.getElementById('hero');
-            const experience = document.getElementById('experience');
-            const projects = document.getElementById('projects');
-            const contact = document.getElementById('contact');
+            // Get all section elements
+            const sectionElements = sections.map(s => document.getElementById(s.id));
+            const tops = sectionElements.map(el => el ? el.offsetTop : 99999);
 
-            const heroTop = hero ? hero.offsetTop : 0;
-            const experienceTop = experience ? experience.offsetTop : 99999;
-            const projectsTop = projects ? projects.offsetTop : 99999;
-            const contactTop = contact ? contact.offsetTop : 99999;
-
-            if (scrollPosition < experienceTop) setActiveSection(0);
-            else if (scrollPosition < projectsTop) setActiveSection(1);
-            else if (scrollPosition < contactTop) setActiveSection(2);
-            else setActiveSection(3);
+            // Find active section
+            let active = 0;
+            for (let i = sections.length - 1; i >= 0; i--) {
+                if (scrollPosition >= tops[i]) {
+                    active = i;
+                    break;
+                }
+            }
+            setActiveSection(active);
         };
 
         window.addEventListener('scroll', handleScroll);
