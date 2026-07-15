@@ -167,3 +167,64 @@ pre {
   background: var(--accent-color);
   color: #000;
 }
+
+/* Featured Projects Responsive Layout */
+.featured-projects-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.featured-project-card {
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-project-card-inner {
+  padding: 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1025px) {
+  .featured-projects-container {
+    flex-direction: row;
+    gap: 30px;
+    align-items: stretch;
+  }
+  
+  .featured-project-card {
+    flex: 1;
+  }
+  
+  .featured-project-card-inner {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .featured-project-card-inner {
+    padding: 24px;
+  }
+}
+
+/* Symmetrical 2x2 Metrics Grid */
+.project-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 480px) {
+  .project-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
