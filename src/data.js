@@ -18,8 +18,7 @@ export const featuredProjects = [
         tagline: "Log any meal in under 5 seconds",
         description: "An Apple-first nutrition tracking application built with a native iOS aesthetic matching Apple Health. Engineered with a feature-first modular architecture, local-first database persistence via SwiftData, offline sync with a Supabase cloud backend, and real-time CoreLocation menu recommendations.",
         tech: ["Swift 6", "SwiftUI", "SwiftData", "Swift Charts", "Supabase", "XcodeGen"],
-        liveUrl: "",
-        githubUrl: "https://github.com/shanmukhaditya/just-nutrition",
+        testflightUrl: "https://testflight.apple.com/join/wH2sehwk",
         logo: "/justnutrition.png",
         colors: {
             primary: '#10B981',

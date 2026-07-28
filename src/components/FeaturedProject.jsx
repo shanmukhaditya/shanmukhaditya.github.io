@@ -127,6 +127,39 @@ const FeaturedProject = () => {
                                                       View Live
                                                   </a>
                                               )}
+                                              {project.testflightUrl && (
+                                                  <a
+                                                      href={project.testflightUrl}
+                                                      target="_blank"
+                                                      rel="noreferrer"
+                                                      style={{
+                                                          display: 'flex',
+                                                          alignItems: 'center',
+                                                          gap: '8px',
+                                                          padding: '12px 24px',
+                                                          borderRadius: '8px',
+                                                          fontWeight: '600',
+                                                          fontFamily: 'var(--font-mono)',
+                                                          fontSize: '1rem',
+                                                          background: colors.primary,
+                                                          color: '#fff',
+                                                          textDecoration: 'none',
+                                                          boxShadow: `0 0 20px ${colors.rgbaPrimary}`,
+                                                          transition: 'all 0.3s ease'
+                                                      }}
+                                                      onMouseEnter={(e) => {
+                                                          e.target.style.transform = 'translateY(-2px)';
+                                                          e.target.style.boxShadow = `0 0 30px ${colors.rgbaPrimary.replace('0.4', '0.6')}`;
+                                                      }}
+                                                      onMouseLeave={(e) => {
+                                                          e.target.style.transform = 'translateY(0)';
+                                                          e.target.style.boxShadow = `0 0 20px ${colors.rgbaPrimary}`;
+                                                      }}
+                                                  >
+                                                      <Smartphone size={18} />
+                                                      TestFlight
+                                                  </a>
+                                              )}
                                               {project.githubUrl && (
                                                   <a
                                                       href={project.githubUrl}
