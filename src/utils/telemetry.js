@@ -8,7 +8,11 @@
  * 5. Batched Payload Transmitter (navigator.sendBeacon)
  */
 
-const TELEMETRY_ENDPOINT = import.meta.env.VITE_TELEMETRY_ENDPOINT || "http://localhost:8000/api/v1/telemetry";
+const DEFAULT_ENDPOINT = (typeof window !== "undefined" && window.location.hostname === "localhost")
+  ? "http://localhost:8000/api/v1/telemetry"
+  : "https://squadfire.shanmukh.dev/api/v1/telemetry";
+
+const TELEMETRY_ENDPOINT = import.meta.env.VITE_TELEMETRY_ENDPOINT || DEFAULT_ENDPOINT;
 
 class TelemetryEngine {
     constructor() {
