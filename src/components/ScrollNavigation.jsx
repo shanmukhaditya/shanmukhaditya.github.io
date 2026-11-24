@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { motion, useScroll } from 'framer-motion';
+import { motion } from 'framer-motion';
+import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 
 const sections = [
-    { id: 'hero', label: 'HOME' },
-    { id: 'featured', label: 'FEAT.' },
-    { id: 'skills', label: 'SKILL' },
-    { id: 'experience', label: 'EXP.' },
-    { id: 'projects', label: 'PROJ.' },
-    { id: 'contact', label: 'MAIL' }
+    { id: 'hero', label: 'HOME', title: 'Home' },
+    { id: 'featured', label: 'FEAT.', title: 'Featured projects' },
+    { id: 'skills', label: 'SKILL', title: 'Skills' },
+    { id: 'experience', label: 'EXP.', title: 'Experience' },
+    { id: 'projects', label: 'PROJ.', title: 'Projects' },
+    { id: 'contact', label: 'MAIL', title: 'Contact' }
 ];
 
 const ScrollNavigation = () => {
     const [activeSection, setActiveSection] = useState(0);
+    const reduceMotion = usePrefersReducedMotion();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -32,14 +34,14 @@ const ScrollNavigation = () => {
             setActiveSection(active);
         };
 
-        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (
-        <div style={{
+        <nav className="portfolio-rail" aria-label="Page sections" style={{
             position: 'fixed',
-            right: '30px',
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 50,
@@ -50,20 +52,17 @@ const ScrollNavigation = () => {
             background: '#0a0a0a', // Dark background
             border: '1px solid #333',
             borderRadius: '50px', // Pill shape
-            padding: '20px 10px',
             boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
         }}>
             {/* Active Indicator Pill */}
-            <motion.div
-                animate={{
-                    top: activeSection * 50 + 30 // Centered: 20px padding + 10px offset
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            <div
+                className="portfolio-rail-indicator"
+                aria-hidden="true"
                 style={{
+                    transform: `translateY(calc(var(--rail-step) * ${activeSection}))`,
                     position: 'absolute',
                     right: '-2px',
                     width: '4px',
-                    height: '30px',
                     background: 'var(--accent-color)', // Cyan
                     borderRadius: '4px',
                     boxShadow: '0 0 10px var(--accent-color)'
@@ -71,21 +70,17 @@ const ScrollNavigation = () => {
             />
 
             {sections.map((section, index) => (
-                <motion.div
+                <motion.a
                     key={section.id}
-                    onClick={() => {
-                        const element = document.getElementById(section.id);
-                        if (element) {
-                            window.scrollTo({
-                                top: element.offsetTop,
-                                behavior: 'smooth'
-                            });
-                        }
-                    }}
+                    className="portfolio-rail-link"
+                    href={`#${section.id}`}
+                    aria-label={section.title}
+                    aria-current={activeSection === index ? 'location' : undefined}
                     animate={{
-                        opacity: activeSection === index ? 1 : 0.4,
+                        opacity: activeSection === index ? 1 : 0.85,
                         color: activeSection === index ? 'var(--accent-color)' : '#888'
                     }}
+                    transition={reduceMotion ? { duration: 0 } : undefined}
                     style={{
                         writingMode: 'vertical-rl',
                         textOrientation: 'mixed',
@@ -96,16 +91,14 @@ const ScrollNavigation = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        height: '50px', // Fixed height for calculation
-                        width: '30px',
                         pointerEvents: 'auto',
                         letterSpacing: '1px'
                     }}
                 >
                     {section.label}
-                </motion.div>
+                </motion.a>
             ))}
-        </div>
+        </nav>
     );
 };
 

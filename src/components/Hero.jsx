@@ -1,35 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ParticleBackground from './ParticleBackground';
 import { motion } from 'framer-motion';
-import { ArrowDown } from 'lucide-react';
+import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
+import { ArrowDown, ArrowUpRight } from 'lucide-react';
+
+const tagline = 'Shipping production AI systems at speed.';
 
 const TypingEffect = ({ text, speed = 100, delay = 0 }) => {
     const [displayedText, setDisplayedText] = useState('');
 
     useEffect(() => {
+        let interval;
         const startTimeout = setTimeout(() => {
             let i = 0;
-            const interval = setInterval(() => {
+            interval = setInterval(() => {
                 setDisplayedText(text.substring(0, i + 1));
                 i++;
                 if (i > text.length) clearInterval(interval);
             }, speed);
-            return () => clearInterval(interval);
         }, delay);
-        return () => clearTimeout(startTimeout);
+        return () => {
+            clearTimeout(startTimeout);
+            clearInterval(interval);
+        };
     }, [text, speed, delay]);
 
-    return <span>{displayedText}<span className="cursor">|</span></span>;
+    return <span aria-hidden="true">{displayedText}<span className="cursor">|</span></span>;
 };
 
 const Hero = ({ theme, shape }) => {
-    return (
-        <section id="hero" style={{ height: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <ParticleBackground theme={theme} shape={shape} />
+    const reduceMotion = usePrefersReducedMotion();
+    const viewpoint = useRef({ x: 0, y: 0 });
 
-            <div className="container" style={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
+    function followPointer(event) {
+        if (reduceMotion || event.pointerType !== 'mouse' ||
+            !window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            return;
+        }
+
+        const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
+        viewpoint.current.x = (event.clientX - left) / width - 0.5;
+        viewpoint.current.y = (event.clientY - top) / height - 0.5;
+    }
+
+    return (
+        <section id="hero" className="portfolio-hero" onPointerMove={followPointer}
+            onPointerLeave={() => { viewpoint.current.x = 0; viewpoint.current.y = 0; }}
+            style={{ height: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ParticleBackground theme={theme} shape={shape} viewpoint={viewpoint} reduceMotion={reduceMotion} />
+
+            <div className="container hero-content" style={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={reduceMotion ? false : { opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8 }}
                 >
@@ -42,8 +64,7 @@ const Hero = ({ theme, shape }) => {
                         &lt;Hello world /&gt;
                     </h2>
 
-                    <h1 style={{
-                        fontSize: 'clamp(3rem, 8vw, 6rem)',
+                    <h1 className="hero-title" style={{
                         marginBottom: '20px',
                         fontWeight: 800,
                         letterSpacing: '-2px'
@@ -62,10 +83,15 @@ const Hero = ({ theme, shape }) => {
                         fontFamily: 'var(--font-mono)',
                         minHeight: '1.5em'
                     }}>
-                        <TypingEffect text="Shipping production AI systems at speed." speed={50} delay={1000} />
+                        {reduceMotion ? tagline : (
+                            <>
+                                <span className="hero-tagline-text">{tagline}</span>
+                                <TypingEffect text={tagline} speed={50} delay={1000} />
+                            </>
+                        )}
                     </p>
 
-                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+                    <div className="hero-actions">
                         <a href="#experience" className="btn btn-primary">
                             View Work
                         </a>
@@ -73,12 +99,18 @@ const Hero = ({ theme, shape }) => {
                             Contact Me
                         </a>
                     </div>
+                    <a href="#justnutrition" className="hero-launch">
+                        <span><strong>JustNutrition</strong> · Live on the App Store</span>
+                        <ArrowUpRight size={15} aria-hidden="true" />
+                    </a>
                 </motion.div>
             </div>
 
             <motion.div
-                animate={{ y: [0, 10, 0] }}
+                animate={reduceMotion ? undefined : { y: [0, 10, 0] }}
                 transition={{ repeat: Infinity, duration: 2 }}
+                className="hero-scroll-cue"
+                aria-hidden="true"
                 style={{ position: 'absolute', bottom: '40px', color: 'var(--secondary-color)' }}
             >
                 <ArrowDown size={24} />

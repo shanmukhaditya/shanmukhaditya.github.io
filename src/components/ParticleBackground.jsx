@@ -8,6 +8,7 @@ const COUNT = 4000;
 const RADIUS = 1.5;
 const MAX_NEIGHBORS = 6; // Slightly higher for better connectivity
 const MAX_DEPTH = 3;
+const ignoreLineRaycast = () => {};
 
 // --- Shaders ---
 const vertexShader = `
@@ -53,10 +54,11 @@ const generateSphere = (count) => {
 const generateDNA = (count) => {
     const points = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-        const t = i * 0.02;
+        const progress = i / (count - 1);
+        const t = progress * Math.PI * 10;
         const strand = i % 2 === 0 ? 1 : -1;
         const x = Math.cos(t) * 0.5 * strand;
-        const y = (i * 0.01) - 2;
+        const y = (progress - 0.5) * 3;
         const z = Math.sin(t) * 0.5 * strand;
         points[i * 3] = x + (Math.random() - 0.5) * 0.1;
         points[i * 3 + 1] = y + (Math.random() - 0.5) * 0.1;
@@ -65,16 +67,20 @@ const generateDNA = (count) => {
     return points;
 };
 
-const NetworkParticles = ({ theme, shape }) => {
+const NetworkParticles = ({ theme, shape, viewpoint, reduceMotion }) => {
+    const groupRef = useRef();
     const pointsRef = useRef();
     const linesRef = useRef();
-    const { raycaster, camera, pointer } = useThree();
+    const { raycaster, camera, invalidate } = useThree();
 
-    // Increase threshold for easier clicking
-    raycaster.params.Points.threshold = 0.2;
+    useEffect(() => {
+        raycaster.params.Points.threshold = 0.2;
+    }, [raycaster]);
+
+    useEffect(() => invalidate(), [invalidate, reduceMotion, shape]);
 
     // 1. Generate Positions
-    const [positions] = useMemo(() => {
+    const positions = useMemo(() => {
         const randomPos = random.inSphere(new Float32Array(COUNT * 3), { radius: RADIUS });
         const spherePos = generateSphere(COUNT);
         const dnaPos = generateDNA(COUNT);
@@ -83,7 +89,7 @@ const NetworkParticles = ({ theme, shape }) => {
             for (let i = 0; i < arr.length; i++) if (isNaN(arr[i])) arr[i] = 0;
         });
 
-        return [{ random: randomPos, sphere: spherePos, dna: dnaPos }];
+        return { random: randomPos, sphere: spherePos, dna: dnaPos };
     }, []);
 
     // 2. Build Graph
@@ -113,7 +119,7 @@ const NetworkParticles = ({ theme, shape }) => {
     }, []);
 
     // 3. Geometry & Attributes
-    const currentPos = useRef(positions.random.slice());
+    const currentPos = useMemo(() => positions.random.slice(), [positions]);
 
     const [lineGeo, lineMaterial] = useMemo(() => {
         const geo = new THREE.BufferGeometry();
@@ -127,7 +133,7 @@ const NetworkParticles = ({ theme, shape }) => {
 
         const mat = new THREE.ShaderMaterial({
             uniforms: {
-                uColor: { value: new THREE.Color(theme === 'dark' ? '#00f0ff' : '#1d4ed8') }
+                uColor: { value: new THREE.Color('#00f0ff') }
             },
             vertexShader,
             fragmentShader,
@@ -137,7 +143,7 @@ const NetworkParticles = ({ theme, shape }) => {
         });
 
         return [geo, mat];
-    }, [connections, theme]);
+    }, [connections]);
 
     // Update uniform color when theme changes
     useEffect(() => {
@@ -146,26 +152,16 @@ const NetworkParticles = ({ theme, shape }) => {
 
 
     // 4. Pulse Logic
-    const activePulse = useRef({
-        active: false,
-        origin: -1,
-        startTime: 0,
-        nodeDepths: new Map() // Map<NodeIndex, Depth>
-    });
+    const activePulse = useRef(null);
 
-    const handlePointerDown = (e) => {
-        // Only trigger if on home section (simple check: scrollY < window height)
-        if (window.scrollY > window.innerHeight * 0.5) return;
+    const handlePointerDown = (event) => {
+        if (reduceMotion) return;
 
-        // Raycast to find closest point
-        raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObject(pointsRef.current);
-
-        if (intersects.length > 0) {
-            // Find the closest point index
-            // intersects[0].index is the index of the vertex
-            const index = intersects[0].index;
-            triggerPulse(index);
+        raycaster.setFromCamera(event.pointer, camera);
+        const [point] = raycaster.intersectObject(pointsRef.current);
+        if (point) {
+            event.stopPropagation();
+            triggerPulse(point.index);
         }
     };
 
@@ -188,99 +184,97 @@ const NetworkParticles = ({ theme, shape }) => {
             }
         }
 
-        activePulse.current = {
-            active: true,
-            origin: startNode,
-            startTime: performance.now(),
-            nodeDepths: depths
-        };
+        activePulse.current = { startTime: performance.now(), depths };
     };
 
-    useFrame((state, delta) => {
-        if (!pointsRef.current || !linesRef.current) return;
-
-        // Skip animation if scrolled away
-        if (window.scrollY > window.innerHeight) return;
-
-        // 1. Rotation & Morphing
-        pointsRef.current.rotation.x -= delta / 15;
-        pointsRef.current.rotation.y -= delta / 20;
-        linesRef.current.rotation.copy(pointsRef.current.rotation);
+    useFrame((_, frameDelta) => {
+        const delta = Math.min(frameDelta, 0.05);
+        const group = groupRef.current;
+        const points = pointsRef.current;
+        const lines = linesRef.current;
+        if (!group || !points || !lines) return;
 
         const target = positions[shape] || positions.random;
-        const array = pointsRef.current.geometry.attributes.position.array;
-        const lerpFactor = 0.05;
+        const pointPositions = points.geometry.attributes.position;
+        const coordinates = pointPositions.array;
+        const { position: linePositions, alpha } = lines.geometry.attributes;
 
-        for (let i = 0; i < COUNT * 3; i++) {
-            array[i] += (target[i] - array[i]) * lerpFactor;
-        }
-        pointsRef.current.geometry.attributes.position.needsUpdate = true;
-
-        // 2. Update Line Positions
-        const linePos = linesRef.current.geometry.attributes.position.array;
-        for (let i = 0; i < connections.length; i++) {
-            const [idx1, idx2] = connections[i];
-
-            linePos[i * 6 + 0] = array[idx1 * 3 + 0];
-            linePos[i * 6 + 1] = array[idx1 * 3 + 1];
-            linePos[i * 6 + 2] = array[idx1 * 3 + 2];
-
-            linePos[i * 6 + 3] = array[idx2 * 3 + 0];
-            linePos[i * 6 + 4] = array[idx2 * 3 + 1];
-            linePos[i * 6 + 5] = array[idx2 * 3 + 2];
-        }
-        linesRef.current.geometry.attributes.position.needsUpdate = true;
-
-        // 3. Pulse Animation
-        const alphas = linesRef.current.geometry.attributes.alpha.array;
-
-        // Decay all alphas
-        for (let i = 0; i < alphas.length; i++) {
-            alphas[i] *= 0.95; // Fade out
-            if (alphas[i] < 0.001) alphas[i] = 0;
+        if (reduceMotion) {
+            group.rotation.x = 0;
+            group.rotation.y = 0;
+            points.rotation.set(0, 0, 0);
+            coordinates.set(target);
+            pointPositions.needsUpdate = true;
+            points.geometry.boundingSphere = null;
+            lines.visible = false;
+            if (activePulse.current) {
+                alpha.array.fill(0);
+                alpha.needsUpdate = true;
+                activePulse.current = null;
+            }
+            return;
         }
 
-        if (activePulse.current.active) {
-            const elapsed = (performance.now() - activePulse.current.startTime) / 1000;
-            const speed = 10; // Propagation speed
-            const currentDist = elapsed * speed;
+        group.rotation.x = THREE.MathUtils.damp(group.rotation.x, viewpoint.current.y * 0.28, 5, delta);
+        group.rotation.y = THREE.MathUtils.damp(group.rotation.y, viewpoint.current.x * 0.36, 5, delta);
+        points.rotation.x -= delta / 15;
+        points.rotation.y -= delta / 20;
 
-            // If pulse is done (passed max depth), we can stop checking, but we let it fade out
-            if (currentDist > MAX_DEPTH + 2) {
-                activePulse.current.active = false;
-            } else {
-                // Activate lines based on depth
-                for (let i = 0; i < connections.length; i++) {
-                    const [u, v] = connections[i];
-                    const depthU = activePulse.current.nodeDepths.get(u);
-                    const depthV = activePulse.current.nodeDepths.get(v);
-
-                    // If both nodes are part of the BFS tree
-                    if (depthU !== undefined && depthV !== undefined) {
-                        const maxDepth = Math.max(depthU, depthV);
-
-                        // Check if wave has reached this depth
-                        if (Math.abs(maxDepth - currentDist) < 1.5) {
-                            // Calculate target opacity based on depth (1 at 0, 0 at 5)
-                            const depthOpacity = Math.max(0, 1 - (maxDepth / MAX_DEPTH));
-
-                            // Set alpha
-                            alphas[i * 2] = Math.max(alphas[i * 2], depthOpacity);
-                            alphas[i * 2 + 1] = Math.max(alphas[i * 2 + 1], depthOpacity);
-                        }
-                    }
-                }
+        const blend = 1 - Math.exp(-delta * 3.1);
+        let changed = false;
+        for (let i = 0; i < coordinates.length; i++) {
+            const remaining = target[i] - coordinates[i];
+            if (Math.abs(remaining) > 0.0001) {
+                coordinates[i] += remaining * blend;
+                changed = true;
             }
         }
+        if (changed) {
+            pointPositions.needsUpdate = true;
+            points.geometry.boundingSphere = null;
+        }
 
-        linesRef.current.geometry.attributes.alpha.needsUpdate = true;
+        const pulse = activePulse.current;
+        if (!pulse) return;
+        const elapsed = (performance.now() - pulse.startTime) / 1000;
+        if (elapsed > 1.5) {
+            lines.visible = false;
+            alpha.array.fill(0);
+            alpha.needsUpdate = true;
+            activePulse.current = null;
+            return;
+        }
+
+        lines.visible = true;
+        lines.rotation.copy(points.rotation);
+        const decay = Math.pow(0.95, delta * 60);
+        const wave = elapsed * 10;
+        for (let i = 0; i < connections.length; i++) {
+            const [from, to] = connections[i];
+            const fromDepth = pulse.depths.get(from);
+            const toDepth = pulse.depths.get(to);
+            const depth = Math.max(fromDepth, toDepth);
+            const vertex = i * 2;
+            const waveOpacity = Number.isFinite(depth) && Math.abs(depth - wave) < 1.5
+                ? 1 - depth / (MAX_DEPTH + 1)
+                : 0;
+            const opacity = Math.max(alpha.array[vertex] * decay, waveOpacity);
+            alpha.setX(vertex, opacity);
+            alpha.setX(vertex + 1, opacity);
+            if (opacity < 0.01) continue;
+
+            linePositions.setXYZ(vertex, coordinates[from * 3], coordinates[from * 3 + 1], coordinates[from * 3 + 2]);
+            linePositions.setXYZ(vertex + 1, coordinates[to * 3], coordinates[to * 3 + 1], coordinates[to * 3 + 2]);
+        }
+        alpha.needsUpdate = true;
+        linePositions.needsUpdate = true;
     });
 
     const pointColor = theme === 'dark' ? '#00f0ff' : '#1d4ed8';
 
     return (
-        <group rotation={[0, 0, Math.PI / 4]} onClick={handlePointerDown}>
-            <Points ref={pointsRef} positions={currentPos.current} stride={3} frustumCulled={false}>
+        <group ref={groupRef} rotation={[0, 0, Math.PI / 4]} onClick={reduceMotion ? undefined : handlePointerDown}>
+            <Points ref={pointsRef} positions={currentPos} stride={3} frustumCulled={false}>
                 <PointMaterial
                     transparent
                     color={pointColor}
@@ -291,17 +285,45 @@ const NetworkParticles = ({ theme, shape }) => {
                 />
             </Points>
 
-            <lineSegments ref={linesRef} geometry={lineGeo} material={lineMaterial} />
+            <lineSegments ref={linesRef} geometry={lineGeo} material={lineMaterial} frustumCulled={false} visible={false} raycast={ignoreLineRaycast} />
         </group>
     );
 };
 
-const ParticleBackground = ({ theme, shape = 'random' }) => {
+class SpaceSceneBoundary extends React.Component {
+    state = { unavailable: false };
+
+    static getDerivedStateFromError() {
+        return { unavailable: true };
+    }
+
+    render() {
+        return this.state.unavailable ? null : this.props.children;
+    }
+}
+
+const ParticleBackground = ({ theme, shape = 'random', viewpoint, reduceMotion }) => {
+    const host = useRef(null);
+    const [visible, setVisible] = useState(true);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting));
+        observer.observe(host.current);
+        return () => observer.disconnect();
+    }, []);
+
     return (
-        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-            <Canvas camera={{ position: [0, 0, 2.5] }} gl={{ alpha: true, antialias: true }}>
-                <NetworkParticles theme={theme} shape={shape} />
-            </Canvas>
+        <div ref={host} className="space-scene" aria-hidden="true">
+            <SpaceSceneBoundary>
+                <Canvas
+                    camera={{ position: [0, 0, 2.5] }}
+                    dpr={[1, 1.5]}
+                    frameloop={visible && !reduceMotion ? 'always' : 'demand'}
+                    gl={{ alpha: true, antialias: true }}
+                >
+                    <NetworkParticles theme={theme} shape={shape} viewpoint={viewpoint} reduceMotion={reduceMotion} />
+                </Canvas>
+            </SpaceSceneBoundary>
         </div>
     );
 };

@@ -28,12 +28,11 @@ function App() {
             <CommandPalette theme={theme} toggleTheme={toggleTheme} />
             <ScrollNavigation />
 
-            <nav style={{
+            <nav className="portfolio-topbar" aria-label="Portfolio controls" style={{
                 position: 'fixed',
                 top: 0,
                 left: 0,
                 right: 0,
-                padding: '20px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -42,7 +41,9 @@ function App() {
                 borderBottom: '1px solid var(--border-color)'
             }}>
                 <button
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    type="button"
+                    aria-label="Back to top"
+                    onClick={() => window.scrollTo({ top: 0 })}
                     style={{
                         fontWeight: 'bold',
                         fontSize: '1.2rem',
@@ -56,7 +57,7 @@ function App() {
                     }}
                 >
                     SY.
-                    <span style={{
+                    <span className="portfolio-shortcut" style={{
                         fontSize: '0.8rem',
                         padding: '2px 6px',
                         background: 'var(--accent-color)',
@@ -69,19 +70,19 @@ function App() {
                     </span>
                 </button>
 
-                <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                <div className="portfolio-topbar-tools">
                     {/* Shape Controls */}
-                    <div style={{ display: 'flex', gap: '10px', marginRight: '20px', borderRight: '1px solid var(--border-color)', paddingRight: '20px' }}>
-                        <button onClick={() => setShape('random')} title="Random Field" style={{ background: 'none', border: 'none', cursor: 'pointer', color: shape === 'random' ? 'var(--accent-color)' : 'var(--secondary-color)' }}><Box size={18} /></button>
-                        <button onClick={() => setShape('dna')} title="DNA Helix" style={{ background: 'none', border: 'none', cursor: 'pointer', color: shape === 'dna' ? 'var(--accent-color)' : 'var(--secondary-color)' }}><Dna size={18} /></button>
-                        <button onClick={() => setShape('sphere')} title="Sphere" style={{ background: 'none', border: 'none', cursor: 'pointer', color: shape === 'sphere' ? 'var(--accent-color)' : 'var(--secondary-color)' }}><Globe size={18} /></button>
+                    <div className="portfolio-shape-controls" role="group" aria-label="Particle shape">
+                        <button type="button" aria-pressed={shape === 'random'} onClick={() => setShape('random')} title="Random Field" style={{ background: 'none', border: 'none', cursor: 'pointer', color: shape === 'random' ? 'var(--accent-color)' : 'var(--secondary-color)' }}><Box size={18} /></button>
+                        <button type="button" aria-pressed={shape === 'dna'} onClick={() => setShape('dna')} title="DNA Helix" style={{ background: 'none', border: 'none', cursor: 'pointer', color: shape === 'dna' ? 'var(--accent-color)' : 'var(--secondary-color)' }}><Dna size={18} /></button>
+                        <button type="button" aria-pressed={shape === 'sphere'} onClick={() => setShape('sphere')} title="Sphere" style={{ background: 'none', border: 'none', cursor: 'pointer', color: shape === 'sphere' ? 'var(--accent-color)' : 'var(--secondary-color)' }}><Globe size={18} /></button>
                     </div>
 
-                    <a href={profile.github} target="_blank" rel="noreferrer" style={{ color: 'var(--text-color)' }}><Github size={20} /></a>
-                    <a href={profile.linkedin} target="_blank" rel="noreferrer" style={{ color: 'var(--text-color)' }}><Linkedin size={20} /></a>
-                    <a href={profile.leetcode} target="_blank" rel="noreferrer" style={{ color: 'var(--text-color)' }}><LeetCodeIcon size={22} /></a>
+                    <a aria-label="GitHub" href={profile.github} target="_blank" rel="noreferrer" style={{ color: 'var(--text-color)' }}><Github size={20} /></a>
+                    <a aria-label="LinkedIn" href={profile.linkedin} target="_blank" rel="noreferrer" style={{ color: 'var(--text-color)' }}><Linkedin size={20} /></a>
+                    <a aria-label="LeetCode" href={profile.leetcode} target="_blank" rel="noreferrer" style={{ color: 'var(--text-color)' }}><LeetCodeIcon size={22} /></a>
 
-                    <button onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>
+                    <button type="button" aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'} onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>
                         {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                     </button>
                 </div>

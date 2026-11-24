@@ -1,9 +1,12 @@
 import React from 'react';
 import { featuredProjects } from '../data';
 import { motion } from 'framer-motion';
+import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
+import ProjectScreens from './ProjectScreens';
 import { Rocket, ExternalLink, Github, Zap, Clock, Code, Server, Database, Smartphone } from 'lucide-react';
 
 const FeaturedProject = () => {
+    const reduceMotion = usePrefersReducedMotion();
     const iconMap = {
         code: <Code size={20} />,
         server: <Server size={20} />,
@@ -22,12 +25,13 @@ const FeaturedProject = () => {
                 </div>
 
                 <div className="featured-projects-container">
-                    {featuredProjects.map((project, index) => {
+                    {featuredProjects.map(project => {
                         const colors = project.colors;
                         return (
                             <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 30 }}
+                                key={project.title}
+                                id={project.appStoreUrl ? 'justnutrition' : undefined}
+                                initial={reduceMotion ? false : { opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6 }}
                                 viewport={{ once: true }}
@@ -53,24 +57,22 @@ const FeaturedProject = () => {
                                         gap: '20px',
                                         marginBottom: '30px'
                                       }}>
-                                          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                          <div className="featured-project-brand">
                                               {/* Logo */}
                                               <motion.img
                                                   src={project.logo}
-                                                  alt={`${project.title} Logo`}
-                                                  initial={{ scale: 0.8, opacity: 0 }}
+                                                  className="featured-project-logo"
+                                                  alt=""
+                                                  initial={reduceMotion ? false : { scale: 0.8, opacity: 0 }}
                                                   whileInView={{ scale: 1, opacity: 1 }}
                                                   transition={{ duration: 0.5 }}
                                                   style={{
-                                                      width: '80px',
-                                                      height: '80px',
                                                       objectFit: 'contain',
                                                       filter: `drop-shadow(0 4px 12px ${colors.rgbaPrimary})`
                                                   }}
                                               />
                                               <div>
-                                                  <h3 style={{
-                                                      fontSize: '2.5rem',
+                                                  <h3 className="featured-project-title" style={{
                                                       marginBottom: '8px',
                                                       background: colors.gradient,
                                                       WebkitBackgroundClip: 'text',
@@ -93,7 +95,7 @@ const FeaturedProject = () => {
                                               </div>
                                           </div>
 
-                                          <div style={{ display: 'flex', gap: '12px' }}>
+                                          <div className="featured-project-links">
                                               {project.liveUrl && (
                                                   <a
                                                       href={project.liveUrl}
@@ -127,37 +129,15 @@ const FeaturedProject = () => {
                                                       View Live
                                                   </a>
                                               )}
-                                              {project.testflightUrl && (
+                                              {project.appStoreUrl && (
                                                   <a
-                                                      href={project.testflightUrl}
+                                                      href={project.appStoreUrl}
+                                                      className="featured-app-store"
                                                       target="_blank"
                                                       rel="noreferrer"
-                                                      style={{
-                                                          display: 'flex',
-                                                          alignItems: 'center',
-                                                          gap: '8px',
-                                                          padding: '12px 24px',
-                                                          borderRadius: '8px',
-                                                          fontWeight: '600',
-                                                          fontFamily: 'var(--font-mono)',
-                                                          fontSize: '1rem',
-                                                          background: colors.primary,
-                                                          color: '#fff',
-                                                          textDecoration: 'none',
-                                                          boxShadow: `0 0 20px ${colors.rgbaPrimary}`,
-                                                          transition: 'all 0.3s ease'
-                                                      }}
-                                                      onMouseEnter={(e) => {
-                                                          e.target.style.transform = 'translateY(-2px)';
-                                                          e.target.style.boxShadow = `0 0 30px ${colors.rgbaPrimary.replace('0.4', '0.6')}`;
-                                                      }}
-                                                      onMouseLeave={(e) => {
-                                                          e.target.style.transform = 'translateY(0)';
-                                                          e.target.style.boxShadow = `0 0 20px ${colors.rgbaPrimary}`;
-                                                      }}
                                                   >
-                                                      <Smartphone size={18} />
-                                                      TestFlight
+                                                      <Smartphone size={18} aria-hidden="true" />
+                                                      View on the App Store
                                                   </a>
                                               )}
                                               {project.githubUrl && (
@@ -207,12 +187,14 @@ const FeaturedProject = () => {
                                           {project.description}
                                       </p>
 
+                                      {project.screens && <ProjectScreens screens={project.screens} />}
+
                                       {/* Metrics */}
                                       <div className="project-metrics-grid">
                                           {project.metrics.map((metric, index) => (
                                               <motion.div
                                                   key={index}
-                                                  initial={{ opacity: 0, scale: 0.9 }}
+                                                  initial={reduceMotion ? false : { opacity: 0, scale: 0.9 }}
                                                   whileInView={{ opacity: 1, scale: 1 }}
                                                   transition={{ delay: index * 0.1 }}
                                                   viewport={{ once: true }}

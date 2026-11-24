@@ -15,10 +15,26 @@ export const profile = {
 export const featuredProjects = [
     {
         title: "JustNutrition",
-        tagline: "Log any meal in under 5 seconds",
-        description: "An Apple-first nutrition tracking application built with a native iOS aesthetic matching Apple Health. Engineered with a feature-first modular architecture, local-first database persistence via SwiftData, offline sync with a Supabase cloud backend, and real-time CoreLocation menu recommendations.",
+        tagline: "Live on the App Store",
+        description: "A native iPhone app for logging meals and tracking calories and macros. Compare nutrition for nearby menus where available, scan a barcode, or get an editable estimate from a photo or description.",
         tech: ["Swift 6", "SwiftUI", "SwiftData", "Swift Charts", "Supabase", "XcodeGen"],
-        testflightUrl: "https://testflight.apple.com/join/wH2sehwk",
+        appStoreUrl: "https://apps.apple.com/us/app/justnutrition/id6795332025",
+        screens: [
+            {
+                id: "today",
+                label: "Today",
+                image: "/justnutrition/today.webp",
+                alt: "JustNutrition Today screen showing calories, macros, and the meal diary.",
+                caption: "See your food diary, calories, and macros for the day."
+            },
+            {
+                id: "estimate-meal",
+                label: "Estimate a meal",
+                image: "/justnutrition/estimate-meal.webp",
+                alt: "JustNutrition meal estimation screen offering photo and text entry.",
+                caption: "Start with a photo or description, then review the estimate before logging."
+            }
+        ],
         logo: "/justnutrition.png",
         colors: {
             primary: '#10B981',
@@ -30,19 +46,16 @@ export const featuredProjects = [
             rgbaPrimaryBorder: 'rgba(16, 185, 129, 0.2)'
         },
         metrics: [
-            { label: "Logging Time", value: "< 5s", icon: "zap" },
+            { label: "Meal Entry", value: "Photo & text", icon: "zap" },
             { label: "Platform", value: "iOS Native", icon: "smartphone" },
             { label: "Offline Cache", value: "SwiftData", icon: "database" },
-            { label: "Cloud Sync", value: "Supabase", icon: "server" }
+            { label: "App Data", value: "PostgreSQL", icon: "server" }
         ],
         highlights: [
-            "Modern Swift 6 & SwiftUI architecture using the Observation framework for reactive state binding",
-            "Feature-First structural layout enforcing modular isolation of features (Today, FoodSearch, Nearby, Barcode, and Kitchen)",
-            "Dynamic 'Nearby' Recommendations: Uses CoreLocation and MapKit to scan local chain restaurants (5km radius) and suggest macro-aligned meals with shame-free targets (e.g. 'Fits with buffer', 'Protein boost')",
-            "Intelligent Menu Customization: Pulls menu and nutritional details dynamically from a synced database including Chipotle, sweetgreen, Panera Bread, CAVA, and others",
-            "Built-in offline persistence via SwiftData cached with remote Supabase cloud databases",
-            "High-performance native Swift Charts visualization for user progress and daily macro tracking",
-            "Photo-logging flow integrated with Supabase Edge Functions for automated meal analysis"
+            "SwiftUI with the Observation framework and feature modules for Today, Food Search, Nearby, Barcode, and Kitchen.",
+            "MapKit for nearby restaurant discovery, with menu nutrition where available.",
+            "SwiftData for local persistence and Swift Charts for progress and daily macro tracking.",
+            "Photo and text meal estimates that users can review and adjust before saving."
         ]
     },
     {
